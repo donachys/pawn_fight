@@ -5,7 +5,8 @@ extern crate itertools;
 extern crate opengl_graphics;
 extern crate piston;
 extern crate piston_window;
-#[macro_use] extern crate conrod;
+#[macro_use]
+extern crate conrod;
 extern crate rand;
 extern crate sdl2_window;
 
@@ -45,9 +46,14 @@ fn main() {
     //     .opengl(opengl).samples(64).exit_on_esc(true).build().unwrap();
 
     // Construct the window.
-    let mut window: PistonWindow =
-        WindowSettings::new("Pawn_Fight!!", [SCREEN_WIDTH, SCREEN_HEIGHT])
-            .opengl(opengl).samples(64).exit_on_esc(true).vsync(true).build().unwrap();
+    let mut window: PistonWindow = WindowSettings::new("Pawn_Fight!!",
+                                                       [SCREEN_WIDTH, SCREEN_HEIGHT])
+        .opengl(opengl)
+        .samples(64)
+        .exit_on_esc(true)
+        .vsync(true)
+        .build()
+        .unwrap();
 
     window.set_ups(60);
     window.set_max_fps(60);
@@ -78,9 +84,10 @@ fn main() {
             println!("{:?}", e);
             e.update(|_| {
                 // println!("conrod update");
-                use conrod::{color, widget, Colorable, Borderable, Labelable, Positionable, Sizeable, Widget};
+                use conrod::{color, widget, Colorable, Borderable, Labelable, Positionable,
+                             Sizeable, Widget};
                 let mut ui = ui.set_widgets();
-                
+
                 widget::Canvas::new()
                 .border(1.0)
                 .pad(30.0)
@@ -88,27 +95,30 @@ fn main() {
                 .color(conrod::color::rgb(0.2, 0.35, 0.45))
                 // .scroll_kids()
                 .set(ids.canvas, &mut ui);
-                
+
                 // set_widgets(&mut ui, &mut app, &mut ids);
                 if widget::Button::new()
-                        .w_h(200.0, 50.0)
-                        .mid_left_of(ids.canvas)
-                        .down_from(ids.title, 45.0)
-                        .rgb(0.4, 0.75, 0.6)
-                        .border(1.0)
-                        .label("PRESS")
-                        .set(ids.button, &mut ui)
-                        .was_clicked()
-                    {
-                        println!("clicked the button");
-                        show_gui = false;
-                    }
+                    .w_h(200.0, 50.0)
+                    .mid_left_of(ids.canvas)
+                    .down_from(ids.title, 45.0)
+                    .rgb(0.4, 0.75, 0.6)
+                    .border(1.0)
+                    .label("PRESS")
+                    .set(ids.button, &mut ui)
+                    .was_clicked() {
+                    println!("clicked the button");
+                    show_gui = false;
+                }
             });
-            
+
             window.draw_2d(&e, |c, g| {
                 if let Some(primitives) = ui.draw_if_changed() {
-                    fn texture_from_image<T>(img: &T) -> &T { img };
-                    conrod::backend::piston_window::draw(c, g, primitives,
+                    fn texture_from_image<T>(img: &T) -> &T {
+                        img
+                    };
+                    conrod::backend::piston_window::draw(c,
+                                                         g,
+                                                         primitives,
                                                          &mut text_texture_cache,
                                                          &image_map,
                                                          texture_from_image);
@@ -127,12 +137,12 @@ fn main() {
                     game.handle_mouse_click(button, cursor);
                 }
                 Event::Input(Input::Press(Button::Keyboard(key))) => {
-                    //handle the keyboard press
+                    // handle the keyboard press
                     // println!("Pressed keyboard button '{:?}'", key);
                     game.handle_key_press(key);
                 }
                 Event::Input(Input::Release(Button::Keyboard(key))) => {
-                    //handle the keyboard release?
+                    // handle the keyboard release?
                     // println!("Released keyboard button '{:?}'", key);
                 }
                 Event::Input(Input::Move(Motion::MouseCursor(x, y))) => {

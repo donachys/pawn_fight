@@ -32,123 +32,134 @@ pub struct HumanPlayer {
     player_num: i32,
     move_buffer: Option<((i32, i32), (i32, i32))>,
     pub input_type: InputTypes,
-    kb_state: KeyboardStates
+    kb_state: KeyboardStates,
 }
 
 impl HumanPlayer {
     pub fn new(p: i32, it: InputTypes) -> HumanPlayer {
-        HumanPlayer{
+        HumanPlayer {
             selection: None,
             moving_selection: None,
             player_num: p,
             move_buffer: None,
             input_type: it,
-            kb_state: KeyboardStates::MOVING
+            kb_state: KeyboardStates::MOVING,
         }
     }
-    pub fn handle_mouse_click(&mut self, click_pos: (i32, i32)) { //TODO: more generic input (kb/mouse)
+    pub fn handle_mouse_click(&mut self, click_pos: (i32, i32)) {
+        // TODO: more generic input (kb/mouse)
         if self.selection.is_some() && !self.is_selection(click_pos) {
-            self.move_buffer = Some((self.selection.expect(
-                                        "Nothing in Move Buffer"), click_pos));
+            self.move_buffer = Some((self.selection.expect("Nothing in Move Buffer"), click_pos));
             self.selection = None;
-            return
+            return;
         }
         self.selection = Some(click_pos);
     }
-    pub fn handle_key_press(&mut self, key: Key ) {
+    pub fn handle_key_press(&mut self, key: Key) {
         match self.moving_selection {
-            Some(s) => {},
-            None => self.moving_selection = Some((BOARD_SIZE/2, BOARD_SIZE/2))
+            Some(s) => {}
+            None => self.moving_selection = Some((BOARD_SIZE / 2, BOARD_SIZE / 2)),
         }
         match key {
-            Key::Right => { 
-                println!("pressed {:?}", key); 
+            Key::Right => {
+                println!("pressed {:?}", key);
                 let pos = self.moving_selection.expect("no moving selection");
                 if self.in_bounds((pos.0 + 1, pos.1)) {
                     self.moving_selection = Some((pos.0 + 1, pos.1))
                 }
-            },
-            Key::Left => { 
+            }
+            Key::Left => {
                 println!("pressed {:?}", key);
                 let pos = self.moving_selection.expect("no moving selection");
                 if self.in_bounds((pos.0 - 1, pos.1)) {
                     self.moving_selection = Some((pos.0 - 1, pos.1))
                 }
-            },
-            Key::Down => { 
+            }
+            Key::Down => {
                 println!("pressed {:?}", key);
                 let pos = self.moving_selection.expect("no moving selection");
                 if self.in_bounds((pos.0, pos.1 + 1)) {
                     self.moving_selection = Some((pos.0, pos.1 + 1))
                 }
-            },
-            Key::Up => { 
+            }
+            Key::Up => {
                 println!("pressed {:?}", key);
                 let pos = self.moving_selection.expect("no moving selection");
                 if self.in_bounds((pos.0, pos.1 - 1)) {
                     self.moving_selection = Some((pos.0, pos.1 - 1))
                 }
-            },
-            Key::Return => { 
+            }
+            Key::Return => {
                 println!("pressed {:?}", key);
                 match self.kb_state {
-                    KeyboardStates::MOVING => { 
+                    KeyboardStates::MOVING => {
                         self.selection = self.moving_selection;
-                        self.kb_state = KeyboardStates::SELECTED 
-                    },
+                        self.kb_state = KeyboardStates::SELECTED
+                    }
                     KeyboardStates::SELECTED => {
                         let pos = self.moving_selection.expect("no moving selection");
                         if !self.is_selection(pos) {
-                            self.move_buffer = Some((self.selection.expect("Nothing in Move Buffer"), 
-                                self.moving_selection.expect("no moving selection")));
+                            self.move_buffer =
+                                Some((self.selection.expect("Nothing in Move Buffer"),
+                                      self.moving_selection.expect("no moving selection")));
                             self.selection = None;
                             self.kb_state = KeyboardStates::MOVING
                         }
                     }
                 }
             }
-            _ => {println!("pressed {:?}", key);} 
+            _ => {
+                println!("pressed {:?}", key);
+            } 
         }
 
     }
-    fn is_selection(&self, pos: (i32, i32)) -> bool{
+    fn is_selection(&self, pos: (i32, i32)) -> bool {
         match self.selection {
             Some(p) => return p == pos,
-            None => return false
+            None => return false,
         }
     }
-    pub fn update(&mut self, board: &mut Board){
+    pub fn update(&mut self, board: &mut Board) {
         match self.move_buffer {
-            Some(m) => {board.check_and_move_token(self.player_num, m.0, m.1); self.move_buffer = None;},
+            Some(m) => {
+                board.check_and_move_token(self.player_num, m.0, m.1);
+                self.move_buffer = None;
+            }
             None => {}
         }
     }
     pub fn draw_selection(&self, c: &graphics::Context, g: &mut GlGraphics) {
         if let Some(sel) = self.selection {
             let canv_pos = Token::to_canv_pos(sel);
-            graphics::CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999*consts::PI).draw(
-                    [(canv_pos.0-SELECTOR_OFFSET) as f64, 
-                    (canv_pos.1-SELECTOR_OFFSET) as f64,
-                    (SELECTOR_SIZE) as f64, 
-                    (SELECTOR_SIZE) as f64],
-                    &c.draw_state, c.transform, g);
+            graphics::CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI)
+                .draw([(canv_pos.0 - SELECTOR_OFFSET) as f64,
+                       (canv_pos.1 - SELECTOR_OFFSET) as f64,
+                       (SELECTOR_SIZE) as f64,
+                       (SELECTOR_SIZE) as f64],
+                      &c.draw_state,
+                      c.transform,
+                      g);
         }
         if let Some(sel) = self.moving_selection {
             let canv_pos = Token::to_canv_pos(sel);
-            graphics::CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999*consts::PI).draw(
-                    [(canv_pos.0-SELECTOR_OFFSET) as f64, 
-                    (canv_pos.1-SELECTOR_OFFSET) as f64,
-                    (SELECTOR_SIZE) as f64, 
-                    (SELECTOR_SIZE) as f64],
-                    &c.draw_state, c.transform, g);
+            graphics::CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI)
+                .draw([(canv_pos.0 - SELECTOR_OFFSET) as f64,
+                       (canv_pos.1 - SELECTOR_OFFSET) as f64,
+                       (SELECTOR_SIZE) as f64,
+                       (SELECTOR_SIZE) as f64],
+                      &c.draw_state,
+                      c.transform,
+                      g);
         }
     }
     fn in_bounds(&self, loc: (i32, i32)) -> bool {
-        loc.0 >= 0 && loc.0 < BOARD_SIZE
-        && loc.1 >= 0 && loc.1 < BOARD_SIZE
+        loc.0 >= 0 && loc.0 < BOARD_SIZE && loc.1 >= 0 && loc.1 < BOARD_SIZE
     }
 }
 
 impl Player for HumanPlayer {
-    fn get_moves(&self) -> Option<((i32, i32), (i32, i32))> { self.move_buffer }
+    fn get_moves(&self) -> Option<((i32, i32), (i32, i32))> {
+        self.move_buffer
+    }
 }

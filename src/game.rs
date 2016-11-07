@@ -41,7 +41,7 @@ widget_ids! {
 
 #[derive(Default)]
 struct Timers {
-    current_time: f64
+    current_time: f64,
 }
 
 pub struct Game {
@@ -50,20 +50,19 @@ pub struct Game {
     timers: Timers,
     board: Board,
     hum_players: Vec<HumanPlayer>,
-    cpu_players: Vec<CpuPlayer>
+    cpu_players: Vec<CpuPlayer>,
 }
 
 impl Game {
-
     pub fn new() -> Game {
         let mut rng = rand::thread_rng();
         let mut board = Board::new(NUM_PLAYERS);
         let mut hum_players = Vec::with_capacity(NUM_HUM_PLAYERS as usize);
         let mut cpu_players = Vec::with_capacity(NUM_HUM_PLAYERS as usize);
 
-            // Create a texture to use for efficiently caching text on the GPU.
+        // Create a texture to use for efficiently caching text on the GPU.
         // let mut text_texture_cache =
-        //     conrod::backend::piston_window::GlyphCache::new(&mut window, SCREEN_WIDTH, SCREEN_HEIGHT);
+        // conrod::backend::piston_window::GlyphCache::new(&mut window, SCREEN_WIDTH, SCREEN_HEIGHT);
 
         // The image map describing each of our widget->image mappings (in our case, none).
         // let image_map = conrod::image::Map::new();
@@ -80,7 +79,7 @@ impl Game {
         //     // println!("conrod update");
         //     use conrod::{color, widget, Colorable, Borderable, Labelable, Positionable, Sizeable, Widget};
         //     let mut ui = ui.set_widgets();
-            
+
         //     widget::Canvas::new()
         //     .border(1.0)
         //     .pad(30.0)
@@ -88,7 +87,7 @@ impl Game {
         //     .color(conrod::color::rgb(0.2, 0.35, 0.45))
         //     // .scroll_kids()
         //     .set(ids.canvas, &mut ui);
-            
+
         //     // set_widgets(&mut ui, &mut app, &mut ids);
         //     if widget::Button::new()
         //             .w_h(200.0, 50.0)
@@ -104,7 +103,7 @@ impl Game {
         //             show_gui = false;
         //         }
         // });
-        
+
         // window.draw_2d(&e, |c, g| {
         //     if let Some(primitives) = ui.draw_if_changed() {
         //         fn texture_from_image<T>(img: &T) -> &T { img };
@@ -118,34 +117,34 @@ impl Game {
         hum_players.push(HumanPlayer::new(0, InputTypes::MOUSE));
         hum_players.push(HumanPlayer::new(1, InputTypes::KEYBOARD));
         // cpu_players.push(CpuPlayer::new(1));
-        //for players 
-            // players.placetokens ( board )
+        // for players
+        // players.placetokens ( board )
 
         Game {
             rng: rng,
             timers: Timers::default(),
             board: board,
             hum_players: hum_players,
-            cpu_players: cpu_players
+            cpu_players: cpu_players,
         }
     }
-    pub fn handle_mouse_click(&mut self, b: MouseButton, c: [f64; 2]){
+    pub fn handle_mouse_click(&mut self, b: MouseButton, c: [f64; 2]) {
         let cell_row: i32 = (c[0] / CELL_WIDTH) as i32;
         let cell_col: i32 = (c[1] / CELL_HEIGHT) as i32;
         for human in self.hum_players.iter_mut() {
             match human.input_type {
                 InputTypes::MOUSE => human.handle_mouse_click((cell_row, cell_col)),
                 InputTypes::KEYBOARD => {}
-           }
+            }
         }
         // println!("Mouse cursor ({}, {}) clicked row '{}' col '{}'", c[0], c[1], cell_row, cell_col);
     }
     pub fn handle_key_press(&mut self, b: Key) {
         for human in self.hum_players.iter_mut() {
             match human.input_type {
-                InputTypes::MOUSE => {},
-                InputTypes::KEYBOARD => {human.handle_key_press(b)}
-           }
+                InputTypes::MOUSE => {}
+                InputTypes::KEYBOARD => human.handle_key_press(b),
+            }
         }
     }
     pub fn render(&mut self, c: graphics::context::Context, g: &mut GlGraphics) {
@@ -161,7 +160,7 @@ impl Game {
         let player_count = self.board.players_remaining();
         if player_count == 1 {
             println!("VICTORY");
-            return
+            return;
         }
         for human in self.hum_players.iter_mut() {
             human.update(&mut self.board);
