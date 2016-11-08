@@ -36,7 +36,50 @@ widget_ids! {
     }
 }
 
+#[derive(Debug)]
+struct CommandLineArgs {
+    is_server: bool,
+    is_client: bool,
+    remoteip : String,
+}
+
+impl CommandLineArgs {
+    pub fn new() -> Self {
+        CommandLineArgs {
+            is_server: false,
+            is_client: false,
+            remoteip : String::from(""),
+        }
+    }
+}
+
+fn parse_args() -> Result<CommandLineArgs, String> {
+    let mut cli_args = CommandLineArgs::new();
+    let mut args = std::env::args();
+    while let Some(arg) = args.next() {
+        match arg.as_str() {
+            "--server" => cli_args.is_server = true,
+            "--client" => {
+                cli_args.is_client = true;
+                if let Some(ip) = args.next() {
+                    cli_args.remoteip = ip;
+                } else {
+                    return Err(String::from("--client requires <remote_ip>"));
+                }
+            },
+            _ => (),
+        }
+    }
+
+    Ok(cli_args)
+}
+
 fn main() {
+    let args = parse_args();
+    if args.is_err() {
+        println!("{}", args.unwrap_err());
+        std::process::exit(1);
+    }
 
     let opengl = OpenGL::V3_2;
 
