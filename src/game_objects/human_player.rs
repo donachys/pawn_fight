@@ -1,10 +1,7 @@
 use std::f64::consts;
 
-use graphics;
-use opengl_graphics::GlGraphics;
 use piston::input::keyboard::Key;
-
-use traits::Player;
+use piston_window::{Context, Graphics, CircleArc};
 
 use game_objects::Board;
 use game_objects::Token;
@@ -62,35 +59,30 @@ impl HumanPlayer {
         }
         match key {
             Key::Right => {
-                println!("pressed {:?}", key);
                 let pos = self.moving_selection.expect("no moving selection");
                 if self.in_bounds((pos.0 + 1, pos.1)) {
                     self.moving_selection = Some((pos.0 + 1, pos.1))
                 }
             }
             Key::Left => {
-                println!("pressed {:?}", key);
                 let pos = self.moving_selection.expect("no moving selection");
                 if self.in_bounds((pos.0 - 1, pos.1)) {
                     self.moving_selection = Some((pos.0 - 1, pos.1))
                 }
             }
             Key::Down => {
-                println!("pressed {:?}", key);
                 let pos = self.moving_selection.expect("no moving selection");
                 if self.in_bounds((pos.0, pos.1 + 1)) {
                     self.moving_selection = Some((pos.0, pos.1 + 1))
                 }
             }
             Key::Up => {
-                println!("pressed {:?}", key);
                 let pos = self.moving_selection.expect("no moving selection");
                 if self.in_bounds((pos.0, pos.1 - 1)) {
                     self.moving_selection = Some((pos.0, pos.1 - 1))
                 }
             }
             Key::Return => {
-                println!("pressed {:?}", key);
                 match self.kb_state {
                     KeyboardStates::MOVING => {
                         self.selection = self.moving_selection;
@@ -108,11 +100,8 @@ impl HumanPlayer {
                     }
                 }
             }
-            _ => {
-                println!("pressed {:?}", key);
-            } 
+            _ => {}
         }
-
     }
     fn is_selection(&self, pos: (i32, i32)) -> bool {
         match self.selection {
@@ -129,10 +118,10 @@ impl HumanPlayer {
             None => {}
         }
     }
-    pub fn draw_selection(&self, c: &graphics::Context, g: &mut GlGraphics) {
+    pub fn draw_selection<G: Graphics>(&self, c: &Context, g: &mut G) {
         if let Some(sel) = self.selection {
             let canv_pos = Token::to_canv_pos(sel);
-            graphics::CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI)
+            CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI)
                 .draw([(canv_pos.0 - SELECTOR_OFFSET) as f64,
                        (canv_pos.1 - SELECTOR_OFFSET) as f64,
                        (SELECTOR_SIZE) as f64,
@@ -143,7 +132,7 @@ impl HumanPlayer {
         }
         if let Some(sel) = self.moving_selection {
             let canv_pos = Token::to_canv_pos(sel);
-            graphics::CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI)
+            CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI)
                 .draw([(canv_pos.0 - SELECTOR_OFFSET) as f64,
                        (canv_pos.1 - SELECTOR_OFFSET) as f64,
                        (SELECTOR_SIZE) as f64,
@@ -155,11 +144,5 @@ impl HumanPlayer {
     }
     fn in_bounds(&self, loc: (i32, i32)) -> bool {
         loc.0 >= 0 && loc.0 < BOARD_SIZE && loc.1 >= 0 && loc.1 < BOARD_SIZE
-    }
-}
-
-impl Player for HumanPlayer {
-    fn get_moves(&self) -> Option<((i32, i32), (i32, i32))> {
-        self.move_buffer
     }
 }

@@ -1,5 +1,3 @@
-use traits::Player;
-
 pub struct CpuPlayer {
     selection: Option<(i32, i32)>,
     player_num: i32,
@@ -13,11 +11,5 @@ impl CpuPlayer {
             player_num: p,
             move_buffer: None,
         }
-    }
-}
-
-impl Player for CpuPlayer {
-    fn get_moves(&self) -> Option<((i32, i32), (i32, i32))> {
-        self.move_buffer
     }
 }
