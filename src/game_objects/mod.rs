@@ -1,8 +1,6 @@
 mod board;
-// mod cell;
 mod token;
-// mod bot;
-// mod game_move;
+
 mod human_player;
 mod cpu_player;
 
@@ -26,9 +24,7 @@ pub mod player_constants {
 }
 
 pub use self::board::Board;
-// pub use self::cell::Cell;
+
 pub use self::token::Token;
 pub use self::human_player::HumanPlayer;
 pub use self::cpu_player::CpuPlayer;
-// pub use self::bot::Bot;
-// pub use self::game_move::GameMove;

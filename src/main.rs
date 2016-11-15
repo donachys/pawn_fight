@@ -1,18 +1,11 @@
-// extern crate find_folder;
-extern crate graphics;
-
 extern crate itertools;
-extern crate opengl_graphics;
 extern crate piston;
 extern crate piston_window;
 #[macro_use]
 extern crate conrod;
 extern crate rand;
-extern crate sdl2_window;
 
 use piston_window::*;
-use opengl_graphics::GlGraphics;
-use sdl2_window::Sdl2Window;
 
 
 mod game;
@@ -24,9 +17,6 @@ use game::Game;
 use drawing::screen;
 const SCREEN_WIDTH: u32 = screen::WIDTH as u32;
 const SCREEN_HEIGHT: u32 = screen::HEIGHT as u32;
-// Use this typedef to make type of window prettier.
-
-// pub type SDL2GameWindow = PistonWindow<Sdl2Window>;
 
 widget_ids! {
     struct Ids {
@@ -40,7 +30,7 @@ widget_ids! {
 struct CommandLineArgs {
     is_server: bool,
     is_client: bool,
-    remoteip : String,
+    remoteip: String,
 }
 
 impl CommandLineArgs {
@@ -48,7 +38,7 @@ impl CommandLineArgs {
         CommandLineArgs {
             is_server: false,
             is_client: false,
-            remoteip : String::from(""),
+            remoteip: String::from(""),
         }
     }
 }
@@ -66,7 +56,7 @@ fn parse_args() -> Result<CommandLineArgs, String> {
                 } else {
                     return Err(String::from("--client requires <remote_ip>"));
                 }
-            },
+            }
             _ => (),
         }
     }
@@ -85,9 +75,6 @@ fn main() {
 
     let mut game = Game::new();
 
-    // let mut window: SDL2GameWindow = WindowSettings::new("Pawn_Fight!", [SCREEN_WIDTH, SCREEN_HEIGHT])
-    //     .opengl(opengl).samples(64).exit_on_esc(true).build().unwrap();
-
     // Construct the window.
     let mut window: PistonWindow = WindowSettings::new("Pawn_Fight!!",
                                                        [SCREEN_WIDTH, SCREEN_HEIGHT])
@@ -101,10 +88,6 @@ fn main() {
     window.set_ups(60);
     window.set_max_fps(60);
 
-    let mut gl = GlGraphics::new(opengl);
-
-    let mut events = window.events();
-
     let mut cursor = [0.0, 0.0];
     // Create a texture to use for efficiently caching text on the GPU.
     let mut text_texture_cache =
@@ -116,17 +99,32 @@ fn main() {
 
     let mut ids = Ids::new(ui.widget_id_generator());
     let mut show_gui: bool = true;
+    let mut clearnow: bool = false;
 
-    while let Some(e) = events.next(&mut window) {
-        // Event handling
-        // Convert the piston event to a conrod event.
-        if show_gui {
-            if let Some(event) = conrod::backend::piston_window::convert_event(e.clone(), &window) {
-                ui.handle_event(event);
+    while let Some(e) = window.next() {
+        e.update(|args| game.update(args.dt));
+        e.press(|b| {
+            match b {
+                Button::Mouse(button) => {
+                    // println!("Pressed mouse button '{:?}'", button);
+                    game.handle_mouse_click(button, cursor);
+                }
+                Button::Keyboard(key) => {
+                    // println!("Pressed keyboard button '{:?}'", key);
+                    game.handle_key_press(key);
+                }
+                _ => {}
             }
-            println!("{:?}", e);
-            e.update(|_| {
-                // println!("conrod update");
+        });
+        e.mouse_cursor(|x, y| {
+            // println!("Mouse moved '{} {}'", x, y);
+            cursor = [x, y];
+        });
+        if let Some(event) = conrod::backend::piston_window::convert_event(e.clone(), &window) {
+            ui.handle_event(event);
+        }
+        e.update(|_| {
+            if show_gui {
                 use conrod::{color, widget, Colorable, Borderable, Labelable, Positionable,
                              Sizeable, Widget};
                 let mut ui = ui.set_widgets();
@@ -151,10 +149,12 @@ fn main() {
                     .was_clicked() {
                     println!("clicked the button");
                     show_gui = false;
+                    clearnow = true;
                 }
-            });
-
-            window.draw_2d(&e, |c, g| {
+            }
+        });
+        window.draw_2d(&e, |c, g| {
+            if show_gui {
                 if let Some(primitives) = ui.draw_if_changed() {
                     fn texture_from_image<T>(img: &T) -> &T {
                         img
@@ -166,35 +166,13 @@ fn main() {
                                                          &image_map,
                                                          texture_from_image);
                 }
-            });
-        } else {
-            match e {
-                Event::Render(args) => {
-                    gl.draw(args.viewport(), |c, g| game.render(c, g));
+            } else {
+                game.render(&c, g);
+                if clearnow {
+                    clear(color::BLACK, g);
+                    clearnow = false;
                 }
-                Event::Update(args) => {
-                    game.update(args.dt);
-                }
-                Event::Input(Input::Press(Button::Mouse(button))) => {
-                    // println!("Pressed mouse button '{:?}'", button);
-                    game.handle_mouse_click(button, cursor);
-                }
-                Event::Input(Input::Press(Button::Keyboard(key))) => {
-                    // handle the keyboard press
-                    // println!("Pressed keyboard button '{:?}'", key);
-                    game.handle_key_press(key);
-                }
-                Event::Input(Input::Release(Button::Keyboard(key))) => {
-                    // handle the keyboard release?
-                    // println!("Released keyboard button '{:?}'", key);
-                }
-                Event::Input(Input::Move(Motion::MouseCursor(x, y))) => {
-                    cursor = [x, y];
-                    println!("Mouse moved '{} {}'", x, y);
-                }
-                _ => {}
             }
-        }
-
+        });
     }
 }
