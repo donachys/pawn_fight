@@ -1,5 +1,3 @@
-
-
 // use graphics;
 // use opengl_graphics::GlGraphics;
 
@@ -9,9 +7,9 @@ use crate::drawing::color;
 // use conrod::color;
 use crate::drawing::screen;
 
+use crate::game_objects::player_constants;
 use crate::game_objects::Token;
 use crate::game_objects::TokenStates;
-use crate::game_objects::player_constants;
 
 const SCREEN_WIDTH: i64 = screen::WIDTH;
 const SCREEN_HEIGHT: i64 = screen::HEIGHT;
@@ -48,8 +46,8 @@ impl Board {
         for (_j, jnum) in (0..MAX_TOKENS).enumerate() {
             out[(0 * SQ_BOARD_SIZE + (jnum + TOKEN_OFFSET) * BOARD_SIZE + 0) as usize] =
                 Some(Token::new(color::GREEN));
-            out[(1 * SQ_BOARD_SIZE + (jnum + TOKEN_OFFSET) * BOARD_SIZE +
-                 (BOARD_SIZE - 1)) as usize] = Some(Token::new(color::ORANGE));
+            out[(1 * SQ_BOARD_SIZE + (jnum + TOKEN_OFFSET) * BOARD_SIZE + (BOARD_SIZE - 1))
+                as usize] = Some(Token::new(color::ORANGE));
         }
         Board {
             rows: BOARD_SIZE,
@@ -117,7 +115,7 @@ impl Board {
         &&                                 // and
         Board::manhattan(from, to) == 2    // exactly 2 distance
         &&                                 // and
-        Board::is_diagonal(from, to)       // diagonal direction
+        Board::is_diagonal(from, to) // diagonal direction
     }
     fn kill_token_at(&mut self, loc: (i32, i32)) {
         for (_i, inum) in (0..self.num_players).enumerate() {
@@ -171,26 +169,32 @@ impl Board {
                 if colored_col {
                     let xpos = col as f64 * SCREEN_WIDTH as f64 / self.cols as f64;
                     let ypos = row as f64 * SCREEN_HEIGHT as f64 / self.rows as f64;
-                    Rectangle::new(color::VIOLET).draw([xpos, ypos, box_width, box_height],
-                                                       &c.draw_state,
-                                                       c.transform,
-                                                       g);
+                    Rectangle::new(color::VIOLET).draw(
+                        [xpos, ypos, box_width, box_height],
+                        &c.draw_state,
+                        c.transform,
+                        g,
+                    );
                 }
             }
         }
         for row in 1..self.rows {
             let ypos = row as f64 * SCREEN_HEIGHT as f64 / self.rows as f64;
-            Line::new(color::LIGHTGREY, 1.0).draw([0.0, ypos, SCREEN_WIDTH as f64, ypos],
-                                                  &c.draw_state,
-                                                  c.transform,
-                                                  g);
+            Line::new(color::LIGHTGREY, 1.0).draw(
+                [0.0, ypos, SCREEN_WIDTH as f64, ypos],
+                &c.draw_state,
+                c.transform,
+                g,
+            );
         }
         for col in 1..self.cols {
             let xpos = col as f64 * SCREEN_WIDTH as f64 / self.cols as f64;
-            Line::new(color::LIGHTGREY, 1.0).draw([xpos, 0.0, xpos, SCREEN_HEIGHT as f64],
-                                                  &c.draw_state,
-                                                  c.transform,
-                                                  g);
+            Line::new(color::LIGHTGREY, 1.0).draw(
+                [xpos, 0.0, xpos, SCREEN_HEIGHT as f64],
+                &c.draw_state,
+                c.transform,
+                g,
+            );
         }
         for (_i, inum) in (0..self.num_players).enumerate() {
             for (_j, jnum) in (0..BOARD_SIZE).enumerate() {

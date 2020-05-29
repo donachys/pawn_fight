@@ -7,14 +7,13 @@ extern crate rand;
 
 use piston_window::*;
 
-
-mod game;
 mod drawing;
+mod game;
 mod game_objects;
 mod traits;
 
-use crate::game::Game;
 use crate::drawing::screen;
+use crate::game::Game;
 const SCREEN_WIDTH: u32 = screen::WIDTH as u32;
 const SCREEN_HEIGHT: u32 = screen::HEIGHT as u32;
 
@@ -76,14 +75,14 @@ fn main() {
     let mut game = Game::new();
 
     // Construct the window.
-    let mut window: PistonWindow = WindowSettings::new("Pawn_Fight!!",
-                                                       [SCREEN_WIDTH, SCREEN_HEIGHT])
-        .opengl(opengl)
-        .samples(64)
-        .exit_on_esc(true)
-        .vsync(true)
-        .build()
-        .unwrap();
+    let mut window: PistonWindow =
+        WindowSettings::new("Pawn_Fight!!", [SCREEN_WIDTH, SCREEN_HEIGHT])
+            .opengl(opengl)
+            .samples(64)
+            .exit_on_esc(true)
+            .vsync(true)
+            .build()
+            .unwrap();
 
     window.set_ups(60);
     window.set_max_fps(60);
@@ -125,17 +124,18 @@ fn main() {
         }
         e.update(|_| {
             if show_gui {
-                use conrod::{widget, Colorable, Borderable, Labelable, Positionable,
-                             Sizeable, Widget};
+                use conrod::{
+                    widget, Borderable, Colorable, Labelable, Positionable, Sizeable, Widget,
+                };
                 let mut ui = ui.set_widgets();
 
                 widget::Canvas::new()
-                .border(1.0)
-                .pad(30.0)
-                // .color(app.bg_color)
-                .color(conrod::color::rgb(0.2, 0.35, 0.45))
-                // .scroll_kids()
-                .set(ids.canvas, &mut ui);
+                    .border(1.0)
+                    .pad(30.0)
+                    // .color(app.bg_color)
+                    .color(conrod::color::rgb(0.2, 0.35, 0.45))
+                    // .scroll_kids()
+                    .set(ids.canvas, &mut ui);
 
                 // set_widgets(&mut ui, &mut app, &mut ids);
                 if widget::Button::new()
@@ -146,7 +146,8 @@ fn main() {
                     .border(1.0)
                     .label("PRESS")
                     .set(ids.button, &mut ui)
-                    .was_clicked() {
+                    .was_clicked()
+                {
                     println!("clicked the button");
                     show_gui = false;
                     clearnow = true;
@@ -159,12 +160,14 @@ fn main() {
                     fn texture_from_image<T>(img: &T) -> &T {
                         img
                     };
-                    conrod::backend::piston_window::draw(c,
-                                                         g,
-                                                         primitives,
-                                                         &mut text_texture_cache,
-                                                         &image_map,
-                                                         texture_from_image);
+                    conrod::backend::piston_window::draw(
+                        c,
+                        g,
+                        primitives,
+                        &mut text_texture_cache,
+                        &image_map,
+                        texture_from_image,
+                    );
                 }
             } else {
                 game.render(&c, g);

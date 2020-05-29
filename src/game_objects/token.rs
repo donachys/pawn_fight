@@ -1,11 +1,10 @@
 use std::f64::consts;
 
-use piston_window::{Context, Graphics, CircleArc, Ellipse};
+use piston_window::{CircleArc, Context, Ellipse, Graphics};
 
 use crate::drawing::color;
 use crate::drawing::screen;
 use crate::drawing::token;
-
 
 use crate::game_objects::TokenStates;
 
@@ -61,75 +60,94 @@ impl Token {
         self.time += dt;
         // if in wait state
         match self.state {
-            TokenStates::WAIT => //see if initial wait has passed
+            TokenStates::WAIT =>
+            //see if initial wait has passed
+            {
                 if self.time >= self.wait_time {
                     self.reset_time();
                     self.state = TokenStates::PREP;
-                },
-            TokenStates::PREP =>
+                }
+            }
+            TokenStates::PREP => {
                 if self.time >= TIMEOUT {
                     self.reset_time();
                     self.state = TokenStates::READY;
-                },
-            TokenStates::READY =>
+                }
+            }
+            TokenStates::READY => {
                 if self.time >= TIMEOUT {
                     self.reset_time();
                     self.state = TokenStates::PREP;
-                },
+                }
+            }
             TokenStates::DEAD => {}
         }
     }
     pub fn draw_at<G: Graphics>(&self, c: &Context, g: &mut G, pos: (i32, i32)) {
         let canv_pos = Token::to_canv_pos(pos);
         match self.state {
-            TokenStates::PREP => {
-                CircleArc::new(color::YELLOW,
-                               2.0,
-                               0.0,
-                               1.9999 * consts::PI * self.time / TIMEOUT)
-                    .resolution(ARC_RESOLUTION)
-                    .draw([canv_pos.0 as f64,
-                           canv_pos.1 as f64,
-                           TOKEN_SIZE as f64,
-                           TOKEN_SIZE as f64],
-                          &c.draw_state,
-                          c.transform,
-                          g)
-            }
-            TokenStates::WAIT => {
-                CircleArc::new(color::RED,
-                               2.0,
-                               0.0,
-                               1.9999 * consts::PI -
-                               (1.9999 * consts::PI * self.time / self.wait_time))
-                    .resolution(ARC_RESOLUTION)
-                    .draw([canv_pos.0 as f64,
-                           canv_pos.1 as f64,
-                           TOKEN_SIZE as f64,
-                           TOKEN_SIZE as f64],
-                          &c.draw_state,
-                          c.transform,
-                          g)
-            }
-            TokenStates::READY => {
-                CircleArc::new(color::BRIGHTGREEN, 4.0, 0.0, 1.9999 * consts::PI)
-                    .resolution(ARC_RESOLUTION)
-                    .draw([canv_pos.0 as f64,
-                           canv_pos.1 as f64,
-                           TOKEN_SIZE as f64,
-                           TOKEN_SIZE as f64],
-                          &c.draw_state,
-                          c.transform,
-                          g)
-            }
+            TokenStates::PREP => CircleArc::new(
+                color::YELLOW,
+                2.0,
+                0.0,
+                1.9999 * consts::PI * self.time / TIMEOUT,
+            )
+            .resolution(ARC_RESOLUTION)
+            .draw(
+                [
+                    canv_pos.0 as f64,
+                    canv_pos.1 as f64,
+                    TOKEN_SIZE as f64,
+                    TOKEN_SIZE as f64,
+                ],
+                &c.draw_state,
+                c.transform,
+                g,
+            ),
+            TokenStates::WAIT => CircleArc::new(
+                color::RED,
+                2.0,
+                0.0,
+                1.9999 * consts::PI - (1.9999 * consts::PI * self.time / self.wait_time),
+            )
+            .resolution(ARC_RESOLUTION)
+            .draw(
+                [
+                    canv_pos.0 as f64,
+                    canv_pos.1 as f64,
+                    TOKEN_SIZE as f64,
+                    TOKEN_SIZE as f64,
+                ],
+                &c.draw_state,
+                c.transform,
+                g,
+            ),
+            TokenStates::READY => CircleArc::new(color::BRIGHTGREEN, 4.0, 0.0, 1.9999 * consts::PI)
+                .resolution(ARC_RESOLUTION)
+                .draw(
+                    [
+                        canv_pos.0 as f64,
+                        canv_pos.1 as f64,
+                        TOKEN_SIZE as f64,
+                        TOKEN_SIZE as f64,
+                    ],
+                    &c.draw_state,
+                    c.transform,
+                    g,
+                ),
             TokenStates::DEAD => {}
         }
-        Ellipse::new(self.color)
-            .resolution(ARC_RESOLUTION)
-            .draw([canv_pos.0 as f64, canv_pos.1 as f64, TOKEN_SIZE as f64, TOKEN_SIZE as f64],
-                  &c.draw_state,
-                  c.transform,
-                  g);
+        Ellipse::new(self.color).resolution(ARC_RESOLUTION).draw(
+            [
+                canv_pos.0 as f64,
+                canv_pos.1 as f64,
+                TOKEN_SIZE as f64,
+                TOKEN_SIZE as f64,
+            ],
+            &c.draw_state,
+            c.transform,
+            g,
+        );
     }
     pub fn reset_time(&mut self) {
         self.time = 0.0;

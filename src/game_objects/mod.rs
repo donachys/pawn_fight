@@ -1,8 +1,8 @@
 mod board;
 mod token;
 
-mod human_player;
 mod cpu_player;
+mod human_player;
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum TokenStates {
@@ -25,6 +25,6 @@ pub mod player_constants {
 
 pub use self::board::Board;
 
-pub use self::token::Token;
-pub use self::human_player::HumanPlayer;
 pub use self::cpu_player::CpuPlayer;
+pub use self::human_player::HumanPlayer;
+pub use self::token::Token;

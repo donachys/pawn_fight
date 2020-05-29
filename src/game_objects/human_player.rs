@@ -1,16 +1,15 @@
 use std::f64::consts;
 
 use piston::input::keyboard::Key;
-use piston_window::{Context, Graphics, CircleArc};
+use piston_window::{CircleArc, Context, Graphics};
 
 use crate::game_objects::Board;
-use crate::game_objects::Token;
 use crate::game_objects::InputTypes;
 use crate::game_objects::KeyboardStates;
+use crate::game_objects::Token;
 
 use crate::drawing::color;
 use crate::drawing::screen;
-
 
 const SCREEN_WIDTH: i64 = screen::WIDTH;
 const SCREEN_HEIGHT: i64 = screen::HEIGHT;
@@ -82,24 +81,23 @@ impl HumanPlayer {
                     self.moving_selection = Some((pos.0, pos.1 - 1))
                 }
             }
-            Key::Return => {
-                match self.kb_state {
-                    KeyboardStates::MOVING => {
-                        self.selection = self.moving_selection;
-                        self.kb_state = KeyboardStates::SELECTED
-                    }
-                    KeyboardStates::SELECTED => {
-                        let pos = self.moving_selection.expect("no moving selection");
-                        if !self.is_selection(pos) {
-                            self.move_buffer =
-                                Some((self.selection.expect("Nothing in Move Buffer"),
-                                      self.moving_selection.expect("no moving selection")));
-                            self.selection = None;
-                            self.kb_state = KeyboardStates::MOVING
-                        }
+            Key::Return => match self.kb_state {
+                KeyboardStates::MOVING => {
+                    self.selection = self.moving_selection;
+                    self.kb_state = KeyboardStates::SELECTED
+                }
+                KeyboardStates::SELECTED => {
+                    let pos = self.moving_selection.expect("no moving selection");
+                    if !self.is_selection(pos) {
+                        self.move_buffer = Some((
+                            self.selection.expect("Nothing in Move Buffer"),
+                            self.moving_selection.expect("no moving selection"),
+                        ));
+                        self.selection = None;
+                        self.kb_state = KeyboardStates::MOVING
                     }
                 }
-            }
+            },
             _ => {}
         }
     }
@@ -121,25 +119,31 @@ impl HumanPlayer {
     pub fn draw_selection<G: Graphics>(&self, c: &Context, g: &mut G) {
         if let Some(sel) = self.selection {
             let canv_pos = Token::to_canv_pos(sel);
-            CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI)
-                .draw([(canv_pos.0 - SELECTOR_OFFSET) as f64,
-                       (canv_pos.1 - SELECTOR_OFFSET) as f64,
-                       (SELECTOR_SIZE) as f64,
-                       (SELECTOR_SIZE) as f64],
-                      &c.draw_state,
-                      c.transform,
-                      g);
+            CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI).draw(
+                [
+                    (canv_pos.0 - SELECTOR_OFFSET) as f64,
+                    (canv_pos.1 - SELECTOR_OFFSET) as f64,
+                    (SELECTOR_SIZE) as f64,
+                    (SELECTOR_SIZE) as f64,
+                ],
+                &c.draw_state,
+                c.transform,
+                g,
+            );
         }
         if let Some(sel) = self.moving_selection {
             let canv_pos = Token::to_canv_pos(sel);
-            CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI)
-                .draw([(canv_pos.0 - SELECTOR_OFFSET) as f64,
-                       (canv_pos.1 - SELECTOR_OFFSET) as f64,
-                       (SELECTOR_SIZE) as f64,
-                       (SELECTOR_SIZE) as f64],
-                      &c.draw_state,
-                      c.transform,
-                      g);
+            CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI).draw(
+                [
+                    (canv_pos.0 - SELECTOR_OFFSET) as f64,
+                    (canv_pos.1 - SELECTOR_OFFSET) as f64,
+                    (SELECTOR_SIZE) as f64,
+                    (SELECTOR_SIZE) as f64,
+                ],
+                &c.draw_state,
+                c.transform,
+                g,
+            );
         }
     }
     fn in_bounds(&self, loc: (i32, i32)) -> bool {

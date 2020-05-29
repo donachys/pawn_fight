@@ -1,14 +1,13 @@
 use std::f64;
 
-
 use piston::input::*;
-use piston_window::{Graphics, Context, clear};
+use piston_window::{clear, Context, Graphics};
 
-use rand::{self, ThreadRng};
 use crate::game_objects::Board;
-use crate::game_objects::HumanPlayer;
 use crate::game_objects::CpuPlayer;
+use crate::game_objects::HumanPlayer;
 use crate::game_objects::InputTypes;
+use rand::{self, ThreadRng};
 
 use crate::drawing::color;
 use crate::drawing::screen;
