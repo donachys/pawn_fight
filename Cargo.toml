@@ -2,6 +2,7 @@
 name = "pawn_fight"
 version = "0.0.1"
 authors = ["Shinski"]
+edition = "2018"
 
 [dependencies]
 conrod = "0.44.1"
