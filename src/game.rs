@@ -1,17 +1,17 @@
 use std::f64;
 
-use conrod;
+
 use piston::input::*;
 use piston_window::{Graphics, Context, clear};
 
 use rand::{self, ThreadRng};
-use game_objects::Board;
-use game_objects::HumanPlayer;
-use game_objects::CpuPlayer;
-use game_objects::InputTypes;
+use crate::game_objects::Board;
+use crate::game_objects::HumanPlayer;
+use crate::game_objects::CpuPlayer;
+use crate::game_objects::InputTypes;
 
-use drawing::color;
-use drawing::screen;
+use crate::drawing::color;
+use crate::drawing::screen;
 
 const SCREEN_WIDTH: i64 = screen::WIDTH;
 const SCREEN_HEIGHT: i64 = screen::HEIGHT;
@@ -40,10 +40,10 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Game {
-        let mut rng = rand::thread_rng();
-        let mut board = Board::new(NUM_PLAYERS);
+        let rng = rand::thread_rng();
+        let board = Board::new(NUM_PLAYERS);
         let mut hum_players = Vec::with_capacity(NUM_HUM_PLAYERS as usize);
-        let mut cpu_players = Vec::with_capacity(NUM_HUM_PLAYERS as usize);
+        let cpu_players = Vec::with_capacity(NUM_HUM_PLAYERS as usize);
 
         hum_players.push(HumanPlayer::new(0, InputTypes::MOUSE));
         hum_players.push(HumanPlayer::new(1, InputTypes::KEYBOARD));
@@ -56,7 +56,7 @@ impl Game {
             cpu_players: cpu_players,
         }
     }
-    pub fn handle_mouse_click(&mut self, b: MouseButton, c: [f64; 2]) {
+    pub fn handle_mouse_click(&mut self, _b: MouseButton, c: [f64; 2]) {
         let cell_row: i32 = (c[0] / CELL_WIDTH) as i32;
         let cell_col: i32 = (c[1] / CELL_HEIGHT) as i32;
         for human in self.hum_players.iter_mut() {

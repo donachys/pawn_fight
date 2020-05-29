@@ -2,12 +2,12 @@ use std::f64::consts;
 
 use piston_window::{Context, Graphics, CircleArc, Ellipse};
 
-use drawing::color;
-use drawing::screen;
-use drawing::token;
+use crate::drawing::color;
+use crate::drawing::screen;
+use crate::drawing::token;
 
-use game_objects::Board;
-use game_objects::TokenStates;
+
+use crate::game_objects::TokenStates;
 
 const SCREEN_WIDTH: i64 = screen::WIDTH;
 const SCREEN_HEIGHT: i64 = screen::HEIGHT;

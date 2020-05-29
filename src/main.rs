@@ -13,8 +13,8 @@ mod drawing;
 mod game_objects;
 mod traits;
 
-use game::Game;
-use drawing::screen;
+use crate::game::Game;
+use crate::drawing::screen;
 const SCREEN_WIDTH: u32 = screen::WIDTH as u32;
 const SCREEN_HEIGHT: u32 = screen::HEIGHT as u32;
 
@@ -97,7 +97,7 @@ fn main() {
     // construct our `Ui`.
     let mut ui = conrod::UiBuilder::new().build();
 
-    let mut ids = Ids::new(ui.widget_id_generator());
+    let ids = Ids::new(ui.widget_id_generator());
     let mut show_gui: bool = true;
     let mut clearnow: bool = false;
 
@@ -125,7 +125,7 @@ fn main() {
         }
         e.update(|_| {
             if show_gui {
-                use conrod::{color, widget, Colorable, Borderable, Labelable, Positionable,
+                use conrod::{widget, Colorable, Borderable, Labelable, Positionable,
                              Sizeable, Widget};
                 let mut ui = ui.set_widgets();
 

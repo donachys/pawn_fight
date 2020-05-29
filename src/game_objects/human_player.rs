@@ -3,14 +3,14 @@ use std::f64::consts;
 use piston::input::keyboard::Key;
 use piston_window::{Context, Graphics, CircleArc};
 
-use game_objects::Board;
-use game_objects::Token;
-use game_objects::InputTypes;
-use game_objects::KeyboardStates;
+use crate::game_objects::Board;
+use crate::game_objects::Token;
+use crate::game_objects::InputTypes;
+use crate::game_objects::KeyboardStates;
 
-use drawing::color;
-use drawing::screen;
-use drawing::token;
+use crate::drawing::color;
+use crate::drawing::screen;
+
 
 const SCREEN_WIDTH: i64 = screen::WIDTH;
 const SCREEN_HEIGHT: i64 = screen::HEIGHT;
@@ -54,7 +54,7 @@ impl HumanPlayer {
     }
     pub fn handle_key_press(&mut self, key: Key) {
         match self.moving_selection {
-            Some(s) => {}
+            Some(_s) => {}
             None => self.moving_selection = Some((BOARD_SIZE / 2, BOARD_SIZE / 2)),
         }
         match key {

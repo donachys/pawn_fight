@@ -1,17 +1,17 @@
-use std::mem;
+
 
 // use graphics;
 // use opengl_graphics::GlGraphics;
 
 use piston_window::{Context, Graphics, Line, Rectangle};
 
-use drawing::color;
+use crate::drawing::color;
 // use conrod::color;
-use drawing::screen;
+use crate::drawing::screen;
 
-use game_objects::Token;
-use game_objects::TokenStates;
-use game_objects::player_constants;
+use crate::game_objects::Token;
+use crate::game_objects::TokenStates;
+use crate::game_objects::player_constants;
 
 const SCREEN_WIDTH: i64 = screen::WIDTH;
 const SCREEN_HEIGHT: i64 = screen::HEIGHT;
@@ -37,15 +37,15 @@ impl Board {
     }
     pub fn new(np: i32) -> Board {
         let mut out = Vec::with_capacity((np * SQ_BOARD_SIZE) as usize);
-        for (i, inum) in (0..np).enumerate() {
-            for (j, jnum) in (0..BOARD_SIZE).enumerate() {
-                for (k, knum) in (0..BOARD_SIZE).enumerate() {
+        for (_i, _inum) in (0..np).enumerate() {
+            for (_j, _jnum) in (0..BOARD_SIZE).enumerate() {
+                for (_k, _knum) in (0..BOARD_SIZE).enumerate() {
                     out.push(Option::None);
                 }
             }
         }
         // TODO: more generic token placement? owned by player?
-        for (j, jnum) in (0..MAX_TOKENS).enumerate() {
+        for (_j, jnum) in (0..MAX_TOKENS).enumerate() {
             out[(0 * SQ_BOARD_SIZE + (jnum + TOKEN_OFFSET) * BOARD_SIZE + 0) as usize] =
                 Some(Token::new(color::GREEN));
             out[(1 * SQ_BOARD_SIZE + (jnum + TOKEN_OFFSET) * BOARD_SIZE +
@@ -97,7 +97,7 @@ impl Board {
         let mut occupying_player: i32 = -1;
         for i in 0..self.num_players {
             match self.surface[self.surface_index(i, to)].as_ref() {
-                Some(t) => {
+                Some(_t) => {
                     occupied = true;
                     occupying_player = i;
                 }
@@ -120,7 +120,7 @@ impl Board {
         Board::is_diagonal(from, to)       // diagonal direction
     }
     fn kill_token_at(&mut self, loc: (i32, i32)) {
-        for (i, inum) in (0..self.num_players).enumerate() {
+        for (_i, inum) in (0..self.num_players).enumerate() {
             let loc_ind = self.surface_index(inum, loc);
             match self.surface[loc_ind].as_mut() {
                 Some(t) => t.state = TokenStates::DEAD,
@@ -137,7 +137,7 @@ impl Board {
         for inum in 0..self.num_players {
             for jnum in (inum * SQ_BOARD_SIZE)..((inum + 1) * SQ_BOARD_SIZE) {
                 match self.surface[jnum as usize].as_ref() {
-                    Some(t) => {
+                    Some(_t) => {
                         player_count += 1;
                         break;
                     }
@@ -192,9 +192,9 @@ impl Board {
                                                   c.transform,
                                                   g);
         }
-        for (i, inum) in (0..self.num_players).enumerate() {
-            for (j, jnum) in (0..BOARD_SIZE).enumerate() {
-                for (k, knum) in (0..BOARD_SIZE).enumerate() {
+        for (_i, inum) in (0..self.num_players).enumerate() {
+            for (_j, jnum) in (0..BOARD_SIZE).enumerate() {
+                for (_k, knum) in (0..BOARD_SIZE).enumerate() {
                     match self.surface[self.surface_index(inum, (jnum, knum))].as_ref() {
                         Some(t) => t.draw_at(c, g, (jnum, knum)),
                         None => {}
