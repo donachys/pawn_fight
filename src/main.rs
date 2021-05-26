@@ -1,3 +1,5 @@
+#![warn(rust_2018_idioms)]
+
 extern crate itertools;
 extern crate piston;
 extern crate piston_window;
