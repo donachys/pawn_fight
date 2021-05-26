@@ -1,6 +1,6 @@
 use std::f64::consts;
 
-use piston::input::keyboard::Key;
+use piston_window::Key;
 use piston_window::{CircleArc, Context, Graphics};
 
 use crate::game_objects::Board;

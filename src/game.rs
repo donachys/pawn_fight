@@ -1,16 +1,10 @@
-use std::f64;
-
-use piston::input::*;
+// use piston::input::*;
 use piston_window::{clear, Context, Graphics};
 
-use crate::game_objects::Board;
-use crate::game_objects::CpuPlayer;
-use crate::game_objects::HumanPlayer;
-use crate::game_objects::InputTypes;
-use rand::{self, ThreadRng};
+use crate::game_objects::{Board, CpuPlayer, HumanPlayer, InputTypes};
+use rand::rngs::ThreadRng;
 
-use crate::drawing::color;
-use crate::drawing::screen;
+use crate::drawing::{color, screen};
 
 const SCREEN_WIDTH: i64 = screen::WIDTH;
 const SCREEN_HEIGHT: i64 = screen::HEIGHT;
@@ -55,7 +49,7 @@ impl Game {
             cpu_players: cpu_players,
         }
     }
-    pub fn handle_mouse_click(&mut self, _b: MouseButton, c: [f64; 2]) {
+    pub fn handle_mouse_click(&mut self, _b: piston_window::MouseButton, c: [f64; 2]) {
         let cell_row: i32 = (c[0] / CELL_WIDTH) as i32;
         let cell_col: i32 = (c[1] / CELL_HEIGHT) as i32;
         for human in self.hum_players.iter_mut() {
@@ -67,7 +61,7 @@ impl Game {
         // println!("Mouse cursor ({}, {}) clicked row '{}' col '{}'",
         //              c[0], c[1], cell_row, cell_col);
     }
-    pub fn handle_key_press(&mut self, b: Key) {
+    pub fn handle_key_press(&mut self, b: piston_window::Key) {
         for human in self.hum_players.iter_mut() {
             match human.input_type {
                 InputTypes::MOUSE => {}
