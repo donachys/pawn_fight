@@ -1,7 +1,6 @@
 mod board;
 mod token;
 
-mod cpu_player;
 mod human_player;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -25,6 +24,5 @@ pub mod player_constants {
 
 pub use self::board::Board;
 
-pub use self::cpu_player::CpuPlayer;
 pub use self::human_player::HumanPlayer;
 pub use self::token::Token;

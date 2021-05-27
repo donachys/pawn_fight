@@ -16,8 +16,6 @@ const CELL_HEIGHT: f64 = (SCREEN_HEIGHT / BOARD_SIZE as i64) as f64;
 const CELL_WIDTH: f64 = (SCREEN_WIDTH / BOARD_SIZE as i64) as f64;
 
 const TOKEN_SIZE: i32 = ((0.6 * (CELL_HEIGHT + CELL_WIDTH)) as i32 / 2) as i32;
-const SELECTOR_SIZE: i32 = (0.85 * (CELL_HEIGHT + CELL_WIDTH) / 2.0) as i32;
-const SELECTOR_OFFSET: i32 = (0.5 * (SELECTOR_SIZE - TOKEN_SIZE) as f64) as i32;
 
 const ARC_RESOLUTION: u32 = token::ARC_RESOLUTION;
 const TIMEOUT: f64 = 10.0;
@@ -47,15 +45,21 @@ impl Token {
             wait_time: INITIAL_WAIT,
         }
     }
+
+    #[allow(unused)]
     pub fn set_color(&mut self, c: [f32; 4]) {
         self.color = c;
     }
+
     pub fn set_wait_time(&mut self, t: f64) {
         self.wait_time = t;
     }
+
+    #[allow(unused)]
     pub fn set_state(&mut self, s: TokenStates) {
         self.state = s;
     }
+
     pub fn update(&mut self, dt: f64) {
         self.time += dt;
         // if in wait state
@@ -83,6 +87,7 @@ impl Token {
             TokenStates::DEAD => {}
         }
     }
+
     pub fn draw_at<G: Graphics>(&self, c: &Context, g: &mut G, pos: (i32, i32)) {
         let canv_pos = Token::to_canv_pos(pos);
         match self.state {
@@ -149,6 +154,7 @@ impl Token {
             g,
         );
     }
+
     pub fn reset_time(&mut self) {
         self.time = 0.0;
     }

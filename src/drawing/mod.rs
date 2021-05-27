@@ -1,3 +1,4 @@
+#[allow(unused)]
 pub mod color {
     pub const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
     pub const DARKGREY: [f32; 4] = [0.35, 0.35, 0.35, 1.0];
