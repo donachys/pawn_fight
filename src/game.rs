@@ -1,4 +1,3 @@
-// use piston::input::*;
 use piston_window::{clear, Context, Graphics};
 
 use crate::game_objects::{Board, HumanPlayer, InputTypes};

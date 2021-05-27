@@ -1,10 +1,6 @@
-// use graphics;
-// use opengl_graphics::GlGraphics;
-
 use piston_window::{Context, Graphics, Line, Rectangle};
 
 use crate::drawing::color;
-// use conrod::color;
 use crate::drawing::screen;
 
 use crate::game_objects::player_constants;

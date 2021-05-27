@@ -26,6 +26,5 @@ pub mod player_constants {
 }
 
 pub use self::board::Board;
-
 pub use self::human_player::HumanPlayer;
 pub use self::token::Token;

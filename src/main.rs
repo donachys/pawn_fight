@@ -1,20 +1,20 @@
 #![warn(rust_2018_idioms)]
 
 use conrod_core::{widget_ids, Borderable, Colorable, Labelable, Positionable, Sizeable, Widget};
-use piston_window::Button;
-use piston_window::MouseCursorEvent;
-use piston_window::OpenGL;
-use piston_window::{clear, texture::UpdateTexture};
-use piston_window::{G2d, G2dTexture, TextureSettings};
-use piston_window::{PistonWindow, PressEvent, UpdateEvent, Window, WindowSettings};
+use piston_window::{
+    clear, texture::UpdateTexture, Button, EventLoop, G2d, G2dTexture, MouseCursorEvent, OpenGL,
+    PistonWindow, PressEvent, TextureSettings, UpdateEvent, Window, WindowSettings,
+};
 
 mod drawing;
 mod game;
 mod game_objects;
 
-use crate::drawing::color;
-use crate::drawing::screen;
-use crate::game::Game;
+use crate::{
+    drawing::{color, screen},
+    game::Game,
+};
+
 const SCREEN_WIDTH: u32 = screen::WIDTH as u32;
 const SCREEN_HEIGHT: u32 = screen::HEIGHT as u32;
 
@@ -105,8 +105,8 @@ fn main() {
             .vsync(true)
             .build()
             .unwrap();
-    // window.set_ups(60);
-    // window.set_max_fps(60);
+    window.set_ups(60);
+    window.set_max_fps(60);
 
     // construct our `Ui`.
     let mut ui = conrod_core::UiBuilder::new([SCREEN_WIDTH as f64, SCREEN_HEIGHT as f64])
