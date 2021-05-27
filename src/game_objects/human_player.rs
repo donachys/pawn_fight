@@ -6,10 +6,10 @@ use piston_window::{CircleArc, Context, Graphics};
 use crate::game_objects::Board;
 use crate::game_objects::InputTypes;
 use crate::game_objects::KeyboardStates;
-use crate::game_objects::Token;
 
 use crate::drawing::color;
 use crate::drawing::screen;
+use crate::game_objects::token::cell_pos_to_canvas_pos;
 
 const SCREEN_WIDTH: i64 = screen::WIDTH;
 const SCREEN_HEIGHT: i64 = screen::HEIGHT;
@@ -39,9 +39,10 @@ impl HumanPlayer {
             player_num: p,
             move_buffer: None,
             input_type: it,
-            kb_state: KeyboardStates::MOVING,
+            kb_state: KeyboardStates::Moving,
         }
     }
+
     pub fn handle_mouse_click(&mut self, click_pos: (i32, i32)) {
         // TODO: more generic input (kb/mouse)
         if self.selection.is_some() && !self.is_selection(click_pos) {
@@ -51,6 +52,7 @@ impl HumanPlayer {
         }
         self.selection = Some(click_pos);
     }
+
     pub fn handle_key_press(&mut self, key: Key) {
         match self.moving_selection {
             Some(_s) => {}
@@ -82,11 +84,11 @@ impl HumanPlayer {
                 }
             }
             Key::Return => match self.kb_state {
-                KeyboardStates::MOVING => {
+                KeyboardStates::Moving => {
                     self.selection = self.moving_selection;
-                    self.kb_state = KeyboardStates::SELECTED
+                    self.kb_state = KeyboardStates::Selected
                 }
-                KeyboardStates::SELECTED => {
+                KeyboardStates::Selected => {
                     let pos = self.moving_selection.expect("no moving selection");
                     if !self.is_selection(pos) {
                         self.move_buffer = Some((
@@ -94,31 +96,31 @@ impl HumanPlayer {
                             self.moving_selection.expect("no moving selection"),
                         ));
                         self.selection = None;
-                        self.kb_state = KeyboardStates::MOVING
+                        self.kb_state = KeyboardStates::Moving
                     }
                 }
             },
             _ => {}
         }
     }
+
     fn is_selection(&self, pos: (i32, i32)) -> bool {
         match self.selection {
-            Some(p) => return p == pos,
-            None => return false,
+            Some(p) => p == pos,
+            None => false,
         }
     }
+
     pub fn update(&mut self, board: &mut Board) {
-        match self.move_buffer {
-            Some(m) => {
-                board.check_and_move_token(self.player_num, m.0, m.1);
-                self.move_buffer = None;
-            }
-            None => {}
+        if let Some(m) = self.move_buffer {
+            board.check_and_move_token(self.player_num, m.0, m.1);
+            self.move_buffer = None;
         }
     }
+
     pub fn draw_selection<G: Graphics>(&self, c: &Context, g: &mut G) {
         if let Some(sel) = self.selection {
-            let canv_pos = Token::to_canv_pos(sel);
+            let canv_pos = cell_pos_to_canvas_pos(sel);
             CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI).draw(
                 [
                     (canv_pos.0 - SELECTOR_OFFSET) as f64,
@@ -132,7 +134,7 @@ impl HumanPlayer {
             );
         }
         if let Some(sel) = self.moving_selection {
-            let canv_pos = Token::to_canv_pos(sel);
+            let canv_pos = cell_pos_to_canvas_pos(sel);
             CircleArc::new(color::BRIGHTBLUE, 2.0, 0.0, 1.9999 * consts::PI).draw(
                 [
                     (canv_pos.0 - SELECTOR_OFFSET) as f64,
@@ -146,6 +148,7 @@ impl HumanPlayer {
             );
         }
     }
+
     fn in_bounds(&self, loc: (i32, i32)) -> bool {
         loc.0 >= 0 && loc.0 < BOARD_SIZE && loc.1 >= 0 && loc.1 < BOARD_SIZE
     }

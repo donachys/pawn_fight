@@ -21,6 +21,14 @@ const ARC_RESOLUTION: u32 = token::ARC_RESOLUTION;
 const TIMEOUT: f64 = 10.0;
 const INITIAL_WAIT: f64 = 1.0;
 
+pub fn cell_pos_to_canvas_pos(pos: (i32, i32)) -> (i32, i32) {
+    let mut x = pos.0 as i64 * SCREEN_WIDTH / BOARD_SIZE as i64;
+    let mut y = pos.1 as i64 * SCREEN_HEIGHT / BOARD_SIZE as i64;
+    x += ((CELL_WIDTH - (TOKEN_SIZE as f64)) / 2.0) as i64;
+    y += ((CELL_HEIGHT - (TOKEN_SIZE as f64)) / 2.0) as i64;
+    (x as i32, y as i32)
+}
+
 pub struct Token {
     time: f64,
     color: [f32; 4],
@@ -29,19 +37,11 @@ pub struct Token {
 }
 
 impl Token {
-    pub fn to_canv_pos(pos: (i32, i32)) -> (i32, i32) {
-        let mut x = pos.0 as i64 * SCREEN_WIDTH / BOARD_SIZE as i64;
-        let mut y = pos.1 as i64 * SCREEN_HEIGHT / BOARD_SIZE as i64;
-        x = x + ((CELL_WIDTH - (TOKEN_SIZE as f64)) / 2.0) as i64;
-        y = y + ((CELL_HEIGHT - (TOKEN_SIZE as f64)) / 2.0) as i64;
-        (x as i32, y as i32)
-    }
-
     pub fn new(color: [f32; 4]) -> Token {
         Token {
             time: 0.0,
-            color: color,
-            state: TokenStates::WAIT,
+            color,
+            state: TokenStates::Wait,
             wait_time: INITIAL_WAIT,
         }
     }
@@ -64,34 +64,34 @@ impl Token {
         self.time += dt;
         // if in wait state
         match self.state {
-            TokenStates::WAIT =>
+            TokenStates::Wait =>
             //see if initial wait has passed
             {
                 if self.time >= self.wait_time {
                     self.reset_time();
-                    self.state = TokenStates::PREP;
+                    self.state = TokenStates::Prep;
                 }
             }
-            TokenStates::PREP => {
+            TokenStates::Prep => {
                 if self.time >= TIMEOUT {
                     self.reset_time();
-                    self.state = TokenStates::READY;
+                    self.state = TokenStates::Ready;
                 }
             }
-            TokenStates::READY => {
+            TokenStates::Ready => {
                 if self.time >= TIMEOUT {
                     self.reset_time();
-                    self.state = TokenStates::PREP;
+                    self.state = TokenStates::Prep;
                 }
             }
-            TokenStates::DEAD => {}
+            TokenStates::Dead => {}
         }
     }
 
     pub fn draw_at<G: Graphics>(&self, c: &Context, g: &mut G, pos: (i32, i32)) {
-        let canv_pos = Token::to_canv_pos(pos);
+        let canv_pos = cell_pos_to_canvas_pos(pos);
         match self.state {
-            TokenStates::PREP => CircleArc::new(
+            TokenStates::Prep => CircleArc::new(
                 color::YELLOW,
                 2.0,
                 0.0,
@@ -109,7 +109,7 @@ impl Token {
                 c.transform,
                 g,
             ),
-            TokenStates::WAIT => CircleArc::new(
+            TokenStates::Wait => CircleArc::new(
                 color::RED,
                 2.0,
                 0.0,
@@ -127,7 +127,7 @@ impl Token {
                 c.transform,
                 g,
             ),
-            TokenStates::READY => CircleArc::new(color::BRIGHTGREEN, 4.0, 0.0, 1.9999 * consts::PI)
+            TokenStates::Ready => CircleArc::new(color::BRIGHTGREEN, 4.0, 0.0, 1.9999 * consts::PI)
                 .resolution(ARC_RESOLUTION)
                 .draw(
                     [
@@ -140,7 +140,7 @@ impl Token {
                     c.transform,
                     g,
                 ),
-            TokenStates::DEAD => {}
+            TokenStates::Dead => {}
         }
         Ellipse::new(self.color).resolution(ARC_RESOLUTION).draw(
             [

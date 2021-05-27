@@ -5,19 +5,22 @@ mod human_player;
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum TokenStates {
-    WAIT,
-    PREP,
-    READY,
-    DEAD,
+    Wait,
+    Prep,
+    Ready,
+    Dead,
 }
+
 pub enum InputTypes {
-    MOUSE,
-    KEYBOARD,
+    Mouse,
+    Keyboard,
 }
+
 pub enum KeyboardStates {
-    MOVING,
-    SELECTED,
+    Moving,
+    Selected,
 }
+
 pub mod player_constants {
     pub const MAX_TOKENS: i32 = 4;
 }

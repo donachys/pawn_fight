@@ -29,12 +29,12 @@ impl Game {
         let board = Board::new(NUM_PLAYERS);
         let mut players = Vec::with_capacity(NUM_PLAYERS as usize);
 
-        players.push(HumanPlayer::new(0, InputTypes::MOUSE));
-        players.push(HumanPlayer::new(1, InputTypes::KEYBOARD));
+        players.push(HumanPlayer::new(0, InputTypes::Mouse));
+        players.push(HumanPlayer::new(1, InputTypes::Keyboard));
 
         Game {
             timers: Timers::default(),
-            board: board,
+            board,
             players,
         }
     }
@@ -43,8 +43,8 @@ impl Game {
         let cell_col: i32 = (c[1] / CELL_HEIGHT) as i32;
         for human in self.players.iter_mut() {
             match human.input_type {
-                InputTypes::MOUSE => human.handle_mouse_click((cell_row, cell_col)),
-                InputTypes::KEYBOARD => {}
+                InputTypes::Mouse => human.handle_mouse_click((cell_row, cell_col)),
+                InputTypes::Keyboard => {}
             }
         }
         // println!("Mouse cursor ({}, {}) clicked row '{}' col '{}'",
@@ -53,8 +53,8 @@ impl Game {
     pub fn handle_key_press(&mut self, b: piston_window::Key) {
         for human in self.players.iter_mut() {
             match human.input_type {
-                InputTypes::MOUSE => {}
-                InputTypes::KEYBOARD => human.handle_key_press(b),
+                InputTypes::Mouse => {}
+                InputTypes::Keyboard => human.handle_key_press(b),
             }
         }
     }
