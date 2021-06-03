@@ -1,17 +1,7 @@
-use std::f64;
+use piston_window::{clear, Context, Graphics};
 
-use conrod;
-use piston::input::*;
-use piston_window::{Graphics, Context, clear};
-
-use rand::{self, ThreadRng};
-use game_objects::Board;
-use game_objects::HumanPlayer;
-use game_objects::CpuPlayer;
-use game_objects::InputTypes;
-
-use drawing::color;
-use drawing::screen;
+use crate::game_objects::{Board, HumanPlayer, InputTypes};
+use crate::drawing::{color, screen};
 
 const SCREEN_WIDTH: i64 = screen::WIDTH;
 const SCREEN_HEIGHT: i64 = screen::HEIGHT;
@@ -20,9 +10,7 @@ const BOARD_SIZE: i32 = screen::SIZE;
 const CELL_HEIGHT: f64 = (SCREEN_HEIGHT as f64 / BOARD_SIZE as f64) as f64;
 const CELL_WIDTH: f64 = (SCREEN_WIDTH as f64 / BOARD_SIZE as f64) as f64;
 
-const NUM_CPU_PLAYERS: i32 = 1;
-const NUM_HUM_PLAYERS: i32 = 1;
-const NUM_PLAYERS: i32 = NUM_HUM_PLAYERS + NUM_CPU_PLAYERS;
+const NUM_PLAYERS: i32 = 2;
 
 #[derive(Default)]
 struct Timers {
@@ -30,49 +18,42 @@ struct Timers {
 }
 
 pub struct Game {
-    /// A random number generator
-    rng: ThreadRng,
     timers: Timers,
     board: Board,
-    hum_players: Vec<HumanPlayer>,
-    cpu_players: Vec<CpuPlayer>,
+    players: Vec<HumanPlayer>,
 }
 
 impl Game {
     pub fn new() -> Game {
-        let mut rng = rand::thread_rng();
-        let mut board = Board::new(NUM_PLAYERS);
-        let mut hum_players = Vec::with_capacity(NUM_HUM_PLAYERS as usize);
-        let mut cpu_players = Vec::with_capacity(NUM_HUM_PLAYERS as usize);
+        let board = Board::new(NUM_PLAYERS);
+        let mut players = Vec::with_capacity(NUM_PLAYERS as usize);
 
-        hum_players.push(HumanPlayer::new(0, InputTypes::MOUSE));
-        hum_players.push(HumanPlayer::new(1, InputTypes::KEYBOARD));
+        players.push(HumanPlayer::new(0, InputTypes::Mouse));
+        players.push(HumanPlayer::new(1, InputTypes::Keyboard));
 
         Game {
-            rng: rng,
             timers: Timers::default(),
-            board: board,
-            hum_players: hum_players,
-            cpu_players: cpu_players,
+            board,
+            players,
         }
     }
-    pub fn handle_mouse_click(&mut self, b: MouseButton, c: [f64; 2]) {
+    pub fn handle_mouse_click(&mut self, _b: piston_window::MouseButton, c: [f64; 2]) {
         let cell_row: i32 = (c[0] / CELL_WIDTH) as i32;
         let cell_col: i32 = (c[1] / CELL_HEIGHT) as i32;
-        for human in self.hum_players.iter_mut() {
+        for human in self.players.iter_mut() {
             match human.input_type {
-                InputTypes::MOUSE => human.handle_mouse_click((cell_row, cell_col)),
-                InputTypes::KEYBOARD => {}
+                InputTypes::Mouse => human.handle_mouse_click((cell_row, cell_col)),
+                InputTypes::Keyboard => {}
             }
         }
         // println!("Mouse cursor ({}, {}) clicked row '{}' col '{}'",
         //              c[0], c[1], cell_row, cell_col);
     }
-    pub fn handle_key_press(&mut self, b: Key) {
-        for human in self.hum_players.iter_mut() {
+    pub fn handle_key_press(&mut self, b: piston_window::Key) {
+        for human in self.players.iter_mut() {
             match human.input_type {
-                InputTypes::MOUSE => {}
-                InputTypes::KEYBOARD => human.handle_key_press(b),
+                InputTypes::Mouse => {}
+                InputTypes::Keyboard => human.handle_key_press(b),
             }
         }
     }
@@ -80,7 +61,7 @@ impl Game {
         // Clear everything
         clear(color::BLACK, g);
         self.board.draw(&c, g);
-        for human in self.hum_players.iter() {
+        for human in self.players.iter() {
             human.draw_selection(c, g);
         }
     }
@@ -91,7 +72,7 @@ impl Game {
             println!("VICTORY");
             return;
         }
-        for human in self.hum_players.iter_mut() {
+        for human in self.players.iter_mut() {
             human.update(&mut self.board);
         }
         self.board.update(dt);
