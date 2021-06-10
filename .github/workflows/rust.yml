@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Prep
-      run: apt-get update && apt-get install libxcb -y
+      run: sudo apt-get update && sudo apt-get install libxcb-shape0 libxcb-xfixes0 -y
     - name: Build
       run: cargo build --verbose
     - name: Run tests
