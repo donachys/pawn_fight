@@ -60,10 +60,8 @@ impl Board {
             // move the token, and change states as needed
             if Board::is_diagonal(from, to) {
                 self.kill_token_at(to);
-                self.move_token(p, from, to);
-            } else {
-                self.move_token(p, from, to);
             }
+            self.move_token(p, from, to);
         }
     }
 

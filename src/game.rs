@@ -1,7 +1,7 @@
 use piston_window::{clear, Context, Graphics};
 
-use crate::game_objects::{Board, HumanPlayer, InputTypes};
 use crate::drawing::{color, screen};
+use crate::game_objects::{Board, HumanPlayer, InputTypes};
 
 const SCREEN_WIDTH: i64 = screen::WIDTH;
 const SCREEN_HEIGHT: i64 = screen::HEIGHT;
